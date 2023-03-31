@@ -38,7 +38,7 @@ module.exports =
     
     quarry: 
       {
-        inventory: [emptySlot],
+        inventory: [{item: 'resource', amount: 1, puttable: false, gettable: true}],
         id: 'quarry'
       },
 

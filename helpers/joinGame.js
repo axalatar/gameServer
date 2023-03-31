@@ -14,7 +14,8 @@ module.exports = (playerToken, gameName) => {
     globals.games[gameName].unusedSpots.shift();
       //gets the first spot in the game's list of open starting spots, and then
       //shifts it down one 
-            
+  
+    globals.updaters[gameName][playerToken] = {buildings: [[[], [], []], [[], [], []], [[], [], []]], ships: []}  
     globals.games[gameName].players[playerToken] = 
       {
         startPoint: startPoint,

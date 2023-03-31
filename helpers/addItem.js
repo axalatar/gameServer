@@ -9,9 +9,9 @@ module.exports = (playerToken, gameName, posX, posY, inventoryIndex, amountAdd, 
   //required to be all be true: 
   //globals.games[gameName], globals.accounts[playerToken], globals.games[gameName].players[playerToken],
   //checkFull(posX), checkFull(posY), checkFull(inventoryIndex), checkFull(amountAdd), checkLength(posX, 0, 2),
-  //checkLength(posY, 0, 2), building.id != buildings.empty.id, inventoryItem.item == items.empty,
+  //checkLength(posY, 0, 2), building.id != buildings.empty.id,
   //checkLength(inventoryIndex, 0, building.inventory.length - 1), items[itemID],
-  //inventoryItem.item == itemID
+  //inventoryItem.item == itemID || inventoryItem.item == items.empty
 
       
       var building = globals.games[gameName].players[playerToken].buildings[posY][posX]

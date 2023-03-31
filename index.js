@@ -1,8 +1,15 @@
+const addItem = require('./helpers/addItem')
+
 var express = require("express");
 var app = express();
- 
+var AsyncLock = require('async-lock');
+var lock = new AsyncLock();
 
-module.exports = {accounts: {}, games: {}} 
+
+var locked = false
+
+globals = { accounts: {}, games: {}, updaters: {} }
+module.exports = globals
 //the global variables
 
 
@@ -46,16 +53,53 @@ players: {(player's general token): {
 */
 
 
+function update() {
+  lock.acquire('locked', function(done) {
+    for (games in globals.updaters) {
+      for (accounts in globals.updaters[games]) {
+        for (buildings in globals.updaters[games][accounts].buildings) {
+          for (Ypos in globals.updaters[games][accounts].buildings[buildings]) {
+            for (Xpos in globals.updaters[games][accounts].buildings[buildings][Ypos]) {
+              actualBuilding = globals.updaters[games][accounts].buildings[buildings][Ypos][Xpos]
+              console.log("Building: ", actualBuilding)
+              // if (actualBuilding.type != 'mine') {
+              //   continue
+              // }
+              // if (actualBuilding.cooldown <= 0) {
+              // ...
+              // } else { 
+              // }
+              if (actualBuilding.type == 'mine') {
+                if (actualBuilding.cooldown <= 0) {
+                  addItem(globals.updaters[games][accounts], globals.updaters[games], Xpos, globals.updaters[games][accounts].buildings[buildings][globals.updaters[games][accounts].buildings[buildings][Ypos][Xpos]], 0, 1, 'resource')
+                  actualBuilding.cooldown = 5
+                }
+                else {
+                  Xpos.cooldown--
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    done();
+  })
+}
 
+const updateInterval = setInterval(update, 1000)
 
-app.use(express.json()); 
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
+app.use((req, res, next) => lock.acquire('locked', function(done) {
+  next()
+  done()
+}))
 
 app.get("/", (req, res) => {
-    res.status(200).send("What an interesting blank page...");
-  });
+  res.status(200).send("What an interesting blank page...");
+});
 
 const gameRoute = require('./routes/game.js');
 const accountRoute = require('./routes/account.js');
@@ -64,20 +108,21 @@ const accountRoute = require('./routes/account.js');
 app.use('/game', gameRoute);
 app.use('/account', accountRoute);
 
-app.use((req, res) => { 
+app.use((req, res) => {
   //if you don't go to either of the above routes,
   //you go to the 404 page
   res.status(404).send("How did you get here?")
 })
 
-app.use((err, req, res, next) => { 
+app.use((err, req, res, next) => {
   //if something breaks, this gets called
+  // console.error("***** ERROR START *****", err)
   console.error(err.stack)
   res.status(500).send('Something broke!')
 })
 
 
-var server = app.listen(4000, function () {
-    console.log("app running on port.", server.address().port);
-    
+var server = app.listen(4000, function() {
+  console.log("app running on port.", server.address().port);
+
 });

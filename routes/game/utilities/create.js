@@ -38,6 +38,8 @@ module.exports = (req, res) => {
     players: {}
   }
 
+  globals.updaters[req.body.name] = {}
+
   joinGame(req.headers.token, req.body.name)
 
   

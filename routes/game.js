@@ -12,7 +12,7 @@ const joinGame = require("./game/utilities/join")
 const placeBuilding = require("./game/buildings/place")
 const transferItems = require("./game/buildings/transfer")
 const listBuildings = require("./game/buildings/list")
-
+const destroyBuilding = require("./game/buildings/destroy")
 
 
 router.use((req, res, next) => {
@@ -174,7 +174,8 @@ router.post("/buildings", (req, res) => {
       listBuildings(req, res)
       break
     case "destroy":
-      
+
+      destroyBuilding(req, res)
       //you know what it does
       break
     default:

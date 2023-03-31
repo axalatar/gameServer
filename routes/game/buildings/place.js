@@ -21,7 +21,8 @@ module.exports = (req, res) => {
     return
   }
 
-globals.games[req.body.name].players[req.headers.token].buildings[req.body.ypos][req.body.xpos] = buildings[items[fromBuilding.inventory[req.body.inventoryIndex].item].building]
+  buildingType = items[fromBuilding.inventory[req.body.inventoryIndex].item].building
+globals.games[req.body.name].players[req.headers.token].buildings[req.body.ypos][req.body.xpos] = buildingType
   
   if(removeItem(req.headers.token, req.body.name, req.body.fromX, req.body.fromY, req.body.inventoryIndex, 1) == false) {
     res.status(400).send("An error occurred")
@@ -29,6 +30,8 @@ globals.games[req.body.name].players[req.headers.token].buildings[req.body.ypos]
   }
   
   
-  
+  if(buildingType == 'factory' || buildingType == 'spaceport' || buildingType == 'quarry') {
+    globals.updaters[req.body.name][req.headers.token].buildings[req.body.ypos][req.body.xpos] = {type: buildingType, cooldown: 5}
+  }
   res.status(200).send("Building succesfully created")
 }
